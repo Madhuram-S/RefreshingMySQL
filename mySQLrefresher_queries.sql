@@ -208,3 +208,37 @@ INNER JOIN city
 	ON city.city_id = a.city_id
 INNER JOIN country as cntry
 	ON cntry.country_id = city.country_id;
+    
+-- 7h. List the top five genres in gross revenue in descending order.
+SELECT
+	c.name as `Category`,
+    SUM(p.amount) as `Total Revenue By Category`
+FROM payment as p
+INNER JOIN rental as r ON r.rental_id = p.rental_id
+INNER JOIN inventory as i ON i.inventory_id = r.inventory_id
+INNER JOIN film_category as fc ON fc.film_id = i.film_id
+INNER JOIN category as c ON c.category_id = fc.category_id
+GROUP BY c.name 
+ORDER BY SUM(p.amount) DESC
+LIMIT 5;
+
+-- 8a Create view for top revenue category
+CREATE OR REPLACE VIEW top_revenue_category
+AS
+SELECT
+	c.name as `Category`,
+    SUM(p.amount) as `Total Revenue By Category`
+FROM payment as p
+INNER JOIN rental as r ON r.rental_id = p.rental_id
+INNER JOIN inventory as i ON i.inventory_id = r.inventory_id
+INNER JOIN film_category as fc ON fc.film_id = i.film_id
+INNER JOIN category as c ON c.category_id = fc.category_id
+GROUP BY c.name 
+ORDER BY SUM(p.amount) DESC LIMIT 5;
+
+-- 8b. CHeck if VIEW works by using Select statement from VIEW
+SELECT * FROM top_revenue_category;
+
+-- 8c. You find that you no longer need the view top_five_genres. Write a query to delete it.
+DROP VIEW top_revenue_category; 
+
